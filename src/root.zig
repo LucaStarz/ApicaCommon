@@ -5,5 +5,6 @@ pub const utils = @import("utils.zig");
 pub const values = @import("values.zig");
 
 test {
+    _ = bytecodes;
     _ = operations;
 }

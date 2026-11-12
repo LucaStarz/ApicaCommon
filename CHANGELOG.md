@@ -2,7 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
-## [0.1.0] - In progress
+## [0.1.1] - Released
+
+### Fixed
+- **Bytecodes**:
+  - Fixed bytecode count constants calculation (`ApicaBytecodeCount`, `BuiltinFunctionBytecodeCount`, `BuiltinMethodBytecodeCount`, `EntrypointBytecodeCount`, `SpecificationBytecodeCount`, `TypeBytecodeCount`) using `@backingInt` instead of direct enum arithmetic.
+
+## [0.1.0] - Released
 
 ### Added
 - **Bytecodes**:

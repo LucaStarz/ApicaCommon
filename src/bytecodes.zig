@@ -15,3 +15,23 @@ pub const BuiltinMethodBytecodeCount = @import("bytecodes/builtin_method.zig").B
 
 pub const TypeBytecode = @import("bytecodes/type.zig").TypeBytecode;
 pub const TypeBytecodeCount = @import("bytecodes/type.zig").TypeBytecodeCount;
+
+test {
+    _ = ApicaBytecode;
+    _ = ApicaBytecodeCount;
+
+    _ = EntrypointBytecode;
+    _ = EntrypointBytecodeCount;
+
+    _ = SpecificationBytecode;
+    _ = SpecificationBytecodeCount;
+
+    _ = BuiltinFunctionBytecode;
+    _ = BuiltinFunctionBytecodeCount;
+
+    _ = BuiltinMethodBytecode;
+    _ = BuiltinMethodBytecodeCount;
+
+    _ = TypeBytecode;
+    _ = TypeBytecodeCount;
+}

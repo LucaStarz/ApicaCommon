@@ -63,4 +63,4 @@ pub const ApicaBytecode = enum(u32) {
     ForStatement = 0x00_00_00_37,
 };
 
-pub const ApicaBytecodeCount: u32 = ApicaBytecode.ForStatement + 1;
+pub const ApicaBytecodeCount: u32 = @backingInt(ApicaBytecode.ForStatement) + 1;

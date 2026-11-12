@@ -14,4 +14,4 @@ pub const SpecificationBytecode = enum(u16) {
     LoggerActivation = 0x00_09,
 };
 
-pub const SpecificationBytecodeCount: u16 = SpecificationBytecode.LoggerActivation + 1;
+pub const SpecificationBytecodeCount: u16 = @backingInt(SpecificationBytecode.LoggerActivation) + 1;

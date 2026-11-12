@@ -30,4 +30,4 @@ pub const TypeBytecode = enum(u8) {
     }
 };
 
-pub const TypeBytecodeCount: u16 = TypeBytecode.List + 1;
+pub const TypeBytecodeCount: u16 = @backingInt(TypeBytecode.List) + 1;

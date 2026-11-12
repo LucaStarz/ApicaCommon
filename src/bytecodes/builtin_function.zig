@@ -45,4 +45,4 @@ pub const BuiltinFunctionBytecode = enum(u32) {
     UseShader = 0x00_00_00_23,
 };
 
-pub const BuiltinFunctionBytecodeCount: u32 = BuiltinFunctionBytecode.UseShader + 1;
+pub const BuiltinFunctionBytecodeCount: u32 = @backingInt(BuiltinFunctionBytecode.UseShader) + 1;

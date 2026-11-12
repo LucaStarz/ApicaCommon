@@ -11,4 +11,4 @@ pub const BuiltinMethodBytecode = enum(u32) {
     StackTrace = 0x00_00_00_07,
 };
 
-pub const BuiltinMethodBytecodeCount = BuiltinMethodBytecode.StackTrace + 1;
+pub const BuiltinMethodBytecodeCount = @backingInt(BuiltinMethodBytecode.StackTrace) + 1;
