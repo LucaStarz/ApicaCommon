@@ -1,0 +1,92 @@
+
+name: Release
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+
+concurrency:
+  group: apica-common-release
+  cancel-in-progress: false
+
+jobs:
+  release:
+    name: Test and tag version
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Install Zig
+        uses: mlugg/setup-zig@v1
+        with:
+          version: 0.17.0
+
+      - name: Check formatting
+        run: zig fmt --check build.zig build.zig.zon src/ tests/
+
+      - name: Run tests
+        run: zig build test
+
+      - name: Detect version change and create tag
+        shell: bash
+        env:
+          BASE_SHA: ${{ github.event.before }}
+        run: |
+          set -euo pipefail
+
+          get_version() {
+            sed -nE \
+              's/^[[:space:]]*\.version[[:space:]]*=[[:space:]]*"([^"]+)".*/\1/p' \
+              "$1" | head -n 1
+          }
+
+          CURRENT_VERSION=$(get_version build.zig.zon)
+
+          if [[ ! "$CURRENT_VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.-]+)?(\+[0-9A-Za-z.-]+)?$ ]]; then
+            echo "::error::Invalid version in build.zig.zon: $CURRENT_VERSION"
+            exit 1
+          fi
+
+          # No previous commit: there is no version change to compare.
+          if [[ -z "$BASE_SHA" || "$BASE_SHA" =~ ^0+$ ]]; then
+            echo "No previous commit to compare. Skipping tag creation."
+            exit 0
+          fi
+
+          PREVIOUS_VERSION=$(
+            git show "${BASE_SHA}:build.zig.zon" |
+              sed -nE \
+                's/^[[:space:]]*\.version[[:space:]]*=[[:space:]]*"([^"]+)".*/\1/p' |
+              head -n 1
+          )
+
+          if [[ "$CURRENT_VERSION" == "$PREVIOUS_VERSION" ]]; then
+            echo "Version unchanged ($CURRENT_VERSION). No tag required."
+            exit 0
+          fi
+
+          TAG="v${CURRENT_VERSION}"
+
+          git fetch --tags origin
+
+          if git rev-parse -q --verify "refs/tags/$TAG" >/dev/null; then
+            echo "::error::Tag $TAG already exists."
+            exit 1
+          fi
+
+          git config user.name "github-actions[bot]"
+          git config user.email \
+            "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git tag -a "$TAG" -m "ApicaCommon $TAG"
+          git push origin "$TAG"
+
+          echo "Successfully created tag $TAG"
