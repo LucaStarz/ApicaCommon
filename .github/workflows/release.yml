@@ -35,46 +35,32 @@ jobs:
       - name: Detect version change and create tag
         id: version_check
         shell: bash
-        env:
-          BASE_SHA: ${{ github.event.before }}
         run: |
           set -euo pipefail
 
-          get_version() {
+          CURRENT_VERSION=$(
             sed -nE \
               's/^[[:space:]]*\.version[[:space:]]*=[[:space:]]*"([^"]+)".*/\1/p' \
-              "$1" | head -n 1
-          }
-
-          CURRENT_VERSION=$(get_version build.zig.zon)
+              build.zig.zon | head -n 1
+          )
 
           if [[ ! "$CURRENT_VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.-]+)?(\+[0-9A-Za-z.-]+)?$ ]]; then
             echo "::error::Invalid version in build.zig.zon: $CURRENT_VERSION"
             exit 1
           fi
 
-          if [[ -z "$BASE_SHA" || "$BASE_SHA" =~ ^0+$ ]]; then
-            echo "No previous commit to compare. Skipping tag and release creation."
-            echo "released=false" >> "$GITHUB_OUTPUT"
-            exit 0
-          fi
+          git fetch --tags origin
 
-          PREVIOUS_VERSION=$(
-            git show "${BASE_SHA}:build.zig.zon" |
-              sed -nE \
-                's/^[[:space:]]*\.version[[:space:]]*=[[:space:]]*"([^"]+)".*/\1/p' |
-              head -n 1
-          )
+          LATEST_TAG=$(git tag -l 'v*' --sort=-v:refname | head -n 1)
+          LATEST_VERSION="${LATEST_TAG#v}"
 
-          if [[ "$CURRENT_VERSION" == "$PREVIOUS_VERSION" ]]; then
-            echo "Version unchanged ($CURRENT_VERSION). No tag or release required."
+          if [[ "$CURRENT_VERSION" == "$LATEST_VERSION" ]]; then
+            echo "Version unchanged ($CURRENT_VERSION == $LATEST_TAG). No tag or release required."
             echo "released=false" >> "$GITHUB_OUTPUT"
             exit 0
           fi
 
           TAG="v${CURRENT_VERSION}"
-
-          git fetch --tags origin
 
           if git rev-parse -q --verify "refs/tags/$TAG" >/dev/null; then
             echo "::error::Tag $TAG already exists."
@@ -88,7 +74,7 @@ jobs:
           git tag -a "$TAG" -m "ApicaCommon $TAG"
           git push origin "$TAG"
 
-          echo "Successfully created tag $TAG"
+          echo "Successfully created tag $TAG (previous: ${LATEST_TAG:-none})"
           echo "released=true" >> "$GITHUB_OUTPUT"
           echo "tag=$TAG" >> "$GITHUB_OUTPUT"
           echo "version=$CURRENT_VERSION" >> "$GITHUB_OUTPUT"
