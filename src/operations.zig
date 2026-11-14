@@ -1,5 +1,6 @@
 pub const delete = @import("operations/delete.zig");
 pub const repr = @import("operations/repr.zig").repr;
+pub const reprValue = @import("operations/repr.zig").reprValue;
 pub const type_repr = @import("operations/type_repr.zig");
 pub const convert = @import("operations/convert.zig").convert;
 
@@ -37,6 +38,7 @@ pub const assign = @import("operations/assign.zig").assign;
 test {
     _ = delete;
     _ = repr;
+    _ = reprValue;
     _ = type_repr;
     _ = convert;
 

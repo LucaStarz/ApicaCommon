@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.1.3] - Released
+
+### Added
+- **operations**
+  - `reprValue` is now accessible from outside.
+
 ## [0.1.2] - Released
 
 ### Added
