@@ -2,13 +2,27 @@
 
 All notable changes to this project will be documented in this file.
 
-## [0.1.3] - Released
+## [0.2.0] - 2026-11-15
+
+### Changed
+- **Linear VM Bytecode Architecture**: Redesigned `ApicaBytecode` from an AST-reconstruction instruction set (`u32`) to a compact linear jump-based instruction set (`u8`).
+- Replaced structural block opcodes (`Compound`, `IfStatement`, `IfElseStatement`, `WhileStatement`, `ForStatement`, `EndOfBlock`) with linear control flow and stack/variable instructions (`Jump`, `JumpIfFalse`, `JumpIfTrue`, `LoopBack`, `EnterScope`, `ExitScope`, `LoadConst`, `LoadVar`, `StoreVar`, `LoadGlobal`, `StoreGlobal`, `Pop`, `Dup`).
+- Replaced `@backingInt` with `@intFromEnum` across bytecode count definitions for Zig 0.17.0 compatibility.
+
+### Added
+- Added missing opcodes required for full language coverage: `Assign`, `Negate`, `BuildList`, `BuildType`, `IndexAccess`, `Call`, `LoadNull`, `LoadTrue`, `LoadFalse`, `DeclareVar`, `DeclareConst`, `LogicalAnd`, `LogicalOr`, `Typeof`, and `Specification`.
+
+### Fixed
+- **`TypeValue.canCollect`**: Fixed type collection checks to properly accept any source type when the target kind is `TypeBytecode.Any` and accept `TypeBytecode.Null` when the target type is nullable.
+- **`Signal.unaryOperationError`**: Fixed diagnostic message prefix to report `"Unary operation"` instead of `"Binary operation"`.
+
+## [0.1.3] - 2026-11-14
 
 ### Added
 - **operations**
   - `reprValue` is now accessible from outside.
 
-## [0.1.2] - Released
+## [0.1.2] - 2026-11-13
 
 ### Added
 - **errors**:
@@ -16,13 +30,13 @@ All notable changes to this project will be documented in this file.
 - **chars**:
   - `countUtf8Codepoints` helper.
 
-## [0.1.1] - Released
+## [0.1.1] - 2026-11-12
 
 ### Fixed
 - **Bytecodes**:
   - Fixed bytecode count constants calculation (`ApicaBytecodeCount`, `BuiltinFunctionBytecodeCount`, `BuiltinMethodBytecodeCount`, `EntrypointBytecodeCount`, `SpecificationBytecodeCount`, `TypeBytecodeCount`) using `@backingInt` instead of direct enum arithmetic.
 
-## [0.1.0] - Released
+## [0.1.0] - 2026-11-12
 
 ### Added
 - **Bytecodes**:

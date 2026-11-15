@@ -88,7 +88,7 @@ pub const Signal = struct {
         errorValue.name = allocator.dupe(u8, OPERATION_ERROR_NAME) catch return InternalError.OutOfMemory;
         errdefer allocator.free(errorValue.name.?);
 
-        errorValue.details = allocator.print("Binary operation `{s}` is not defined for type <{s}>", .{ operation, operand_repr }) catch return InternalError.OutOfMemory;
+        errorValue.details = allocator.print("Unary operation `{s}` is not defined for type <{s}>", .{ operation, operand_repr }) catch return InternalError.OutOfMemory;
         errdefer allocator.free(errorValue.details.?);
 
         errorValue.stack_trace = .empty;

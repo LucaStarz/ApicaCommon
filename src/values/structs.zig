@@ -95,7 +95,10 @@ pub const TypeValue = struct {
     }
 
     pub fn canCollect(self: *const TypeValue, other: *const TypeValue) bool {
-        var collectable = self.kind == other.kind and (self.is_nullable or !other.is_nullable) and self.contained.items.len == other.contained.items.len;
+        if (!self.is_nullable and other.is_nullable) return false;
+        if (self.kind == .Any or other.kind == .Null) return true;
+
+        var collectable = self.kind == other.kind and self.contained.items.len == other.contained.items.len;
         if (collectable) {
             for (0..self.contained.items.len) |i| {
                 collectable = collectable and self.contained.items[i].canCollect(&other.contained.items[i]);
