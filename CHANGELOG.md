@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.2.1] - 2026-11-16
+
+### Added
+- **Bytecodes**:
+  - Added exception handling opcodes to `ApicaBytecode`: `TryBegin` (`0x48`), `TryEnd` (`0x49`), and `Throw` (`0x4A`), updating `ApicaBytecodeCount` accordingly.
+
 ## [0.2.0] - 2026-11-15
 
 ### Changed

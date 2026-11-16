@@ -1,21 +1,21 @@
 pub const ApicaBytecode = enum(u8) {
-    // Système & Entrées
+    // System & Entrypoints
     Halt = 0x00,
     NoOperation = 0x01,
     Specification = 0x02,
     Entrypoint = 0x03,
 
-    // Pile & Constantes
+    // Stack & Constants
     LoadConst = 0x04,
     LoadNull = 0x05,
     LoadTrue = 0x06,
     LoadFalse = 0x07,
-    BuildList = 0x08, // Dépile N éléments + TypeValue -> empile ListValue
-    BuildType = 0x09, // Construit un TypeValue (kind, is_nullable, N types imbriqués)
+    BuildList = 0x08, // Pop N elements + TypeValue -> push ListValue
+    BuildType = 0x09, // Build a TypeValue (kind, is_nullable, N nested types)
     Pop = 0x0A,
     Dup = 0x0B,
 
-    // Variables & Portées
+    // Variables & Scopes
     EnterScope = 0x0C,
     ExitScope = 0x0D,
     DeclareVar = 0x0E,
@@ -25,12 +25,12 @@ pub const ApicaBytecode = enum(u8) {
     LoadGlobal = 0x12,
     StoreGlobal = 0x13,
 
-    // Appels
+    // Calls
     Call = 0x14,
     BuiltinFunctionCall = 0x15,
     BuiltinMethodCall = 0x16,
 
-    // Affectation & Opérations arithmétiques / bit-à-bit
+    // Assignment & Arithmetic / Bitwise Operations
     Assign = 0x17,
     Negate = 0x18,
     Add = 0x19,
@@ -59,7 +59,7 @@ pub const ApicaBytecode = enum(u8) {
     BitwiseXorAssignment = 0x30,
     BitwiseNot = 0x31,
 
-    // Comparaisons & Logique
+    // Comparisons & Logic
     Equals = 0x32,
     NotEquals = 0x33,
     LessThan = 0x34,
@@ -70,7 +70,7 @@ pub const ApicaBytecode = enum(u8) {
     LogicalAnd = 0x39,
     LogicalOr = 0x3A,
 
-    // Références, Indexation, Membres & Types
+    // References, Indexing, Members & Types
     MemberAccess = 0x3B,
     ConditionalMemberAccess = 0x3C,
     IndexAccess = 0x3D,
@@ -79,13 +79,18 @@ pub const ApicaBytecode = enum(u8) {
     Cast = 0x40,
     Typeof = 0x41,
 
-    // Contrôle de flux linéaire
+    // Linear Control Flow
     Jump = 0x42,
     JumpIfFalse = 0x43,
     JumpIfTrue = 0x44,
     LoopBack = 0x45,
     BlankReturn = 0x46,
     FilledReturn = 0x47,
+
+    // Exception Handling
+    TryBegin = 0x48, // Install an exception handler (operand: relative offset to the catch block)
+    TryEnd = 0x49, // Remove the current exception handler upon normal exit from the try block
+    Throw = 0x4A, // Pop an error/exception Value and unwind the stack to the active handler
 };
 
-pub const ApicaBytecodeCount: u32 = @backingInt(ApicaBytecode.FilledReturn) + 1;
+pub const ApicaBytecodeCount: u32 = @backingInt(ApicaBytecode.Throw) + 1;
